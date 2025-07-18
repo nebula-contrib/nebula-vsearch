@@ -1954,9 +1954,8 @@ Value Value::lessThan(const Value& v) const {
       // e.g. What is the result of `duration('P1M') < duration('P30D')`?
       return kNullBadType;
     }
-    case Value::Type::VECTOR: {
-      return getVector() < v.getVector();
-    }
+
+    case Value::Type::VECTOR:
     case Value::Type::NULLVALUE:
     case Value::Type::__EMPTY__: {
       return kNullBadType;
@@ -2448,6 +2447,7 @@ Value operator+(const Value& lhs, const Value& rhs) {
         }
       }
     }
+    case Value::Type::VECTOR:
     default: {
       return Value::kNullBadType;
     }
@@ -2541,6 +2541,7 @@ Value operator-(const Value& lhs, const Value& rhs) {
         }
       }
     }
+    case Value::Type::VECTOR:
     default: {
       return Value::kNullBadType;
     }
