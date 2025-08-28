@@ -79,12 +79,14 @@ nebula_add_executable(
         $<TARGET_OBJECTS:storage_client_obj>
         $<TARGET_OBJECTS:storage_client_base_obj>
         $<TARGET_OBJECTS:storage_common_obj>
+        $<TARGET_OBJECTS:vector_index_obj>
         ${common_deps}
         ${storage_meta_deps}
     LIBRARIES
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         curl
 )
@@ -251,12 +253,14 @@ nebula_add_executable(
         $<TARGET_OBJECTS:meta_data_upgrade_obj>
         $<TARGET_OBJECTS:meta_v2_thrift_obj>
         $<TARGET_OBJECTS:gc_obj>
+        $<TARGET_OBJECTS:vector_index_obj>
         ${storage_meta_deps}
         ${common_deps}
     LIBRARIES
         ${ROCKSDB_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
         ${THRIFT_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         curl
 )

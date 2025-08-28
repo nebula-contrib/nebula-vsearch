@@ -5,6 +5,8 @@
 
 #include "storage/admin/AdminTask.h"
 
+#include "storage/admin/BuildEdgeVectorIndexTask.h"
+#include "storage/admin/BuildTagVectorIndexTask.h"
 #include "storage/admin/CompactTask.h"
 #include "storage/admin/DownloadTask.h"
 #include "storage/admin/FlushTask.h"
@@ -35,6 +37,12 @@ std::shared_ptr<AdminTask> AdminTaskFactory::createAdminTask(StorageEnv* env, Ta
       break;
     case meta::cpp2::JobType::REBUILD_FULLTEXT_INDEX:
       ret = std::make_shared<RebuildFTIndexTask>(env, std::move(ctx));
+      break;
+    case meta::cpp2::JobType::BUILD_TAG_VECTOR_INDEX:
+      ret = std::make_shared<BuildTagVectorIndexTask>(env, std::move(ctx));
+      break;
+    case meta::cpp2::JobType::BUILD_EDGE_VECTOR_INDEX:
+      ret = std::make_shared<BuildEdgeVectorIndexTask>(env, std::move(ctx));
       break;
     case meta::cpp2::JobType::STATS:
       ret = std::make_shared<StatsTask>(env, std::move(ctx));

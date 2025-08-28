@@ -14,9 +14,11 @@
 #include "common/log/LogMonitor.h"
 #include "common/meta/IndexManager.h"
 #include "common/meta/SchemaManager.h"
+#include "kvstore/KVStore.h"
 #include "kvstore/NebulaStore.h"
 #include "storage/CommonUtils.h"
 #include "storage/GraphStorageLocalServer.h"
+#include "storage/VectorIndexManager.h"
 #include "storage/admin/AdminTaskManager.h"
 #include "storage/transaction/TransactionManager.h"
 #include "webservice/WebService.h"
@@ -43,6 +45,10 @@ class StorageServer final {
   void notifyStop();
 
   void waitUntilStop();
+
+  kvstore::KVStore* getStore();
+  meta::IndexManager* getIndexMgr();
+  meta::SchemaManager* getSchemaMgr();
 
  private:
   enum ServiceStatus { STATUS_UNINITIALIZED = 0, STATUS_RUNNING = 1, STATUS_STOPPED = 2 };
@@ -110,6 +116,9 @@ class StorageServer final {
   std::unique_ptr<meta::SchemaManager> schemaMan_;
   std::unique_ptr<meta::IndexManager> indexMan_;
   std::unique_ptr<storage::StorageEnv> env_;
+
+  // // Vector Index Manager - singleton component for managing vector indexes
+  // VectorIndexManager* vectorIndexManager_{nullptr};
 
   HostAddr localHost_;
   std::vector<HostAddr> metaAddrs_;

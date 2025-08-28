@@ -12,7 +12,6 @@
 #include <thrift/lib/cpp/util/EnumUtils.h>
 
 #include <boost/filesystem.hpp>
-#include <unordered_set>
 
 #include "clients/meta/FileBasedClusterIdMan.h"
 #include "clients/meta/stats/MetaClientStats.h"
@@ -61,6 +60,7 @@ namespace nebula {
 namespace meta {
 
 Indexes buildIndexes(std::vector<cpp2::IndexItem> indexItemVec);
+AnnIndexes buildAnnIndexes(std::vector<cpp2::AnnIndexItem> indexItemVec);
 
 MetaClient::MetaClient(std::shared_ptr<folly::IOThreadPoolExecutor> ioThreadPool,
                        std::vector<HostAddr> addrs,
@@ -339,6 +339,11 @@ bool MetaClient::loadData() {
       return false;
     }
 
+    if (!loadAnnIndexes(spaceId, spaceCache)) {
+      LOG(ERROR) << "Load AnnIndexes Failed";
+      return false;
+    }
+
     if (!loadListeners(spaceId, spaceCache)) {
       LOG(ERROR) << "Load Listeners Failed";
       return false;
@@ -596,6 +601,56 @@ Indexes buildIndexes(std::vector<cpp2::IndexItem> indexItemVec) {
     indexes.emplace(indexID, indexPtr);
   }
   return indexes;
+}
+
+AnnIndexes buildAnnIndexes(std::vector<cpp2::AnnIndexItem> indexItemVec) {
+  memory::MemoryCheckOffGuard g;
+  AnnIndexes indexes;
+  for (auto index : indexItemVec) {
+    auto indexName = index.get_index_name();
+    auto indexID = index.get_index_id();
+    auto indexPtr = std::make_shared<cpp2::AnnIndexItem>(index);
+    indexes.emplace(indexID, indexPtr);
+  }
+  return indexes;
+}
+
+bool MetaClient::loadAnnIndexes(GraphSpaceID spaceId, std::shared_ptr<SpaceInfoCache> cache) {
+  memory::MemoryCheckOffGuard g;
+  auto tagIndexesRet = listTagAnnIndexes(spaceId).get();
+  if (!tagIndexesRet.ok()) {
+    LOG(ERROR) << "Get tag indexes failed for spaceId " << spaceId << ", "
+               << tagIndexesRet.status();
+    return false;
+  }
+
+  auto edgeIndexesRet = listEdgeAnnIndexes(spaceId).get();
+  if (!edgeIndexesRet.ok()) {
+    LOG(ERROR) << "Get edge indexes failed for spaceId " << spaceId << ", "
+               << edgeIndexesRet.status();
+    return false;
+  }
+
+  auto tagIndexItemVec = tagIndexesRet.value();
+  cache->tagAnnIndexItemVec_ = tagIndexItemVec;
+  cache->tagAnnIndexes_ = buildAnnIndexes(tagIndexItemVec);
+  for (const auto& tagIndex : tagIndexItemVec) {
+    auto indexName = tagIndex.get_index_name();
+    auto indexID = tagIndex.get_index_id();
+    std::pair<GraphSpaceID, std::string> pair(spaceId, indexName);
+    tagNameIndexMap_[pair] = indexID;
+  }
+
+  auto edgeIndexItemVec = edgeIndexesRet.value();
+  cache->edgeAnnIndexItemVec_ = edgeIndexItemVec;
+  cache->edgeAnnIndexes_ = buildAnnIndexes(edgeIndexItemVec);
+  for (auto& edgeIndex : edgeIndexItemVec) {
+    auto indexName = edgeIndex.get_index_name();
+    auto indexID = edgeIndex.get_index_id();
+    std::pair<GraphSpaceID, std::string> pair(spaceId, indexName);
+    edgeNameIndexMap_[pair] = indexID;
+  }
+  return true;
 }
 
 bool MetaClient::loadIndexes(GraphSpaceID spaceId, std::shared_ptr<SpaceInfoCache> cache) {
@@ -1902,6 +1957,74 @@ folly::Future<StatusOr<std::vector<cpp2::IndexItem>>> MetaClient::listTagIndexes
   return future;
 }
 
+folly::Future<StatusOr<IndexID>> MetaClient::createTagAnnIndex(
+    GraphSpaceID spaceID,
+    std::string indexName,
+    std::vector<std::string> tagNames,
+    cpp2::IndexFieldDef field,
+    bool ifNotExists,
+    std::vector<std::string> annIndexParam,
+    const std::string* comment) {
+  memory::MemoryCheckOffGuard g;
+  cpp2::CreateTagAnnIndexReq req;
+  req.space_id_ref() = spaceID;
+  req.index_name_ref() = std::move(indexName);
+  req.tag_names_ref() = std::move(tagNames);
+  req.field_ref() = std::move(field);
+  req.if_not_exists_ref() = ifNotExists;
+  if (!annIndexParam.empty()) {
+    req.ann_params_ref().ensure() = std::move(annIndexParam);
+  }
+  if (comment != nullptr) {
+    req.comment_ref() = *comment;
+  }
+
+  folly::Promise<StatusOr<IndexID>> promise;
+  auto future = promise.getFuture();
+  getResponse(
+      std::move(req),
+      [](auto client, auto request) { return client->future_createTagAnnIndex(request); },
+      [](cpp2::ExecResp&& resp) -> IndexID { return resp.get_id().get_index_id(); },
+      std::move(promise));
+  return future;
+}
+
+folly::Future<StatusOr<std::vector<cpp2::AnnIndexItem>>> MetaClient::listTagAnnIndexes(
+    GraphSpaceID spaceId) {
+  memory::MemoryCheckOffGuard g;
+  cpp2::ListTagIndexesReq req;
+  req.space_id_ref() = spaceId;
+
+  folly::Promise<StatusOr<std::vector<cpp2::AnnIndexItem>>> promise;
+  auto future = promise.getFuture();
+  getResponse(
+      std::move(req),
+      [](auto client, auto request) { return client->future_listTagAnnIndexes(request); },
+      [](cpp2::ListTagAnnIndexesResp&& resp) -> decltype(auto) {
+        return std::move(resp).get_items();
+      },
+      std::move(promise));
+  return future;
+}
+
+folly::Future<StatusOr<std::vector<cpp2::AnnIndexItem>>> MetaClient::listEdgeAnnIndexes(
+    GraphSpaceID spaceId) {
+  memory::MemoryCheckOffGuard g;
+  cpp2::ListEdgeIndexesReq req;
+  req.space_id_ref() = spaceId;
+
+  folly::Promise<StatusOr<std::vector<cpp2::AnnIndexItem>>> promise;
+  auto future = promise.getFuture();
+  getResponse(
+      std::move(req),
+      [](auto client, auto request) { return client->future_listEdgeAnnIndexes(request); },
+      [](cpp2::ListEdgeAnnIndexesResp&& resp) -> decltype(auto) {
+        return std::move(resp).get_items();
+      },
+      std::move(promise));
+  return future;
+}
+
 folly::Future<StatusOr<bool>> MetaClient::rebuildTagIndex(GraphSpaceID spaceID, std::string name) {
   memory::MemoryCheckOffGuard g;
   cpp2::RebuildIndexReq req;
@@ -2298,6 +2421,54 @@ StatusOr<std::shared_ptr<cpp2::IndexItem>> MetaClient::getTagIndexFromCache(Grap
     auto iter = spaceIt->second->tagIndexes_.find(indexID);
     if (iter == spaceIt->second->tagIndexes_.end()) {
       VLOG(3) << "Space " << spaceId << ", Tag Index " << indexID << " not found!";
+      return Status::IndexNotFound();
+    } else {
+      return iter->second;
+    }
+  }
+}
+
+StatusOr<std::shared_ptr<cpp2::AnnIndexItem>> MetaClient::getTagAnnIndexFromCache(
+    GraphSpaceID spaceId, IndexID indexID) {
+  memory::MemoryCheckOffGuard g;
+  if (!ready_) {
+    return Status::Error("Not ready!");
+  }
+
+  folly::rcu_reader guard;
+  const auto& metadata = *metadata_.load();
+  auto spaceIt = metadata.localCache_.find(spaceId);
+  if (spaceIt == metadata.localCache_.end()) {
+    VLOG(3) << "Space " << spaceId << " not found!";
+    return Status::SpaceNotFound(fmt::format("SpaceId `{}`", spaceId));
+  } else {
+    auto iter = spaceIt->second->tagAnnIndexes_.find(indexID);
+    if (iter == spaceIt->second->tagAnnIndexes_.end()) {
+      VLOG(3) << "Space " << spaceId << ", Tag Index " << indexID << " not found!";
+      return Status::IndexNotFound();
+    } else {
+      return iter->second;
+    }
+  }
+}
+
+StatusOr<std::shared_ptr<cpp2::AnnIndexItem>> MetaClient::getEdgeAnnIndexFromCache(
+    GraphSpaceID spaceId, IndexID indexID) {
+  memory::MemoryCheckOffGuard g;
+  if (!ready_) {
+    return Status::Error("Not ready!");
+  }
+
+  folly::rcu_reader guard;
+  const auto& metadata = *metadata_.load();
+  auto spaceIt = metadata.localCache_.find(spaceId);
+  if (spaceIt == metadata.localCache_.end()) {
+    VLOG(3) << "Space " << spaceId << " not found!";
+    return Status::SpaceNotFound(fmt::format("SpaceId `{}`", spaceId));
+  } else {
+    auto iter = spaceIt->second->edgeAnnIndexes_.find(indexID);
+    if (iter == spaceIt->second->edgeAnnIndexes_.end()) {
+      VLOG(3) << "Space " << spaceId << ", Edge Ann Index " << indexID << " not found!";
       return Status::IndexNotFound();
     } else {
       return iter->second;

@@ -29,6 +29,10 @@ nebula_add_library(
     admin/StatsTask.cpp
     admin/GetLeaderProcessor.cpp
     admin/ClearSpaceProcessor.cpp
+    admin/BuildVectorIndexTask.cpp
+    admin/BuildTagVectorIndexTask.cpp
+    admin/BuildEdgeVectorIndexTask.cpp
+    VectorIndexManager.cpp
 )
 
 nebula_add_library(

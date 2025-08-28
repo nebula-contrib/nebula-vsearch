@@ -10,6 +10,7 @@ set(storage_test_deps
     $<TARGET_OBJECTS:meta_v2_thrift_obj>
     $<TARGET_OBJECTS:meta_data_upgrade_obj>
     $<TARGET_OBJECTS:storage_admin_service_handler>
+    $<TARGET_OBJECTS:vector_index_obj>
     $<TARGET_OBJECTS:graph_storage_service_handler>
     $<TARGET_OBJECTS:storage_common_obj>
     $<TARGET_OBJECTS:storage_transaction_executor>
@@ -83,6 +84,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -99,6 +101,41 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
+        wangle
+        gtest
+        curl
+)
+
+nebula_add_test(
+    NAME
+        build_tag_vector_index_test
+    SOURCES
+        BuildTagVectorIndexTest.cpp
+    OBJECTS
+        ${storage_test_deps}
+    LIBRARIES
+        ${ROCKSDB_LIBRARIES}
+        ${THRIFT_LIBRARIES}
+        ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
+        wangle
+        gtest
+        curl
+)
+
+nebula_add_test(
+    NAME
+        build_edge_vector_index_test
+    SOURCES
+        BuildEdgeVectorIndexTest.cpp
+    OBJECTS
+        ${storage_test_deps}
+    LIBRARIES
+        ${ROCKSDB_LIBRARIES}
+        ${THRIFT_LIBRARIES}
+        ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -115,6 +152,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -131,6 +169,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -147,6 +186,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -163,6 +203,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -179,6 +220,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -195,6 +237,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -211,6 +254,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -227,6 +271,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -243,6 +288,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -259,6 +305,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         follybenchmark
         boost_regex
@@ -278,6 +325,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -294,6 +342,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -310,6 +359,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -326,6 +376,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}  
         wangle
         gtest
         curl
@@ -342,6 +393,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         follybenchmark
@@ -360,6 +412,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -376,6 +429,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -392,6 +446,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -409,6 +464,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         follybenchmark
         boost_regex
@@ -428,6 +484,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -449,6 +506,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -466,6 +524,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         follybenchmark
         wangle
         boost_regex
@@ -484,6 +543,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -503,6 +563,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -522,6 +583,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -538,6 +600,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -554,6 +617,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -570,6 +634,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -586,6 +651,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -602,6 +668,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -618,6 +685,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -639,6 +707,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -660,6 +729,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -681,6 +751,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -697,6 +768,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -713,6 +785,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         follybenchmark
         boost_regex
@@ -730,6 +803,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -746,6 +820,7 @@ nebula_add_test(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         gtest
         curl
 )
@@ -761,6 +836,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         wangle
         gtest
         curl
@@ -777,6 +853,7 @@ nebula_add_executable(
         ${ROCKSDB_LIBRARIES}
         ${THRIFT_LIBRARIES}
         ${PROXYGEN_LIBRARIES}
+        ${VECTOR_INDEX_LIBRARIES}
         follybenchmark
         boost_regex
         wangle
