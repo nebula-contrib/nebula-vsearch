@@ -24,13 +24,18 @@
 #include "meta/processors/config/SetConfigProcessor.h"
 #include "meta/processors/id/GetSegmentIdProcessor.h"
 #include "meta/processors/id/GetWorkerIdProcessor.h"
+#include "meta/processors/index/CreateEdgeAnnIndexProcessor.h"
 #include "meta/processors/index/CreateEdgeIndexProcessor.h"
 #include "meta/processors/index/CreateTagAnnIndexProcessor.h"
 #include "meta/processors/index/CreateTagIndexProcessor.h"
+#include "meta/processors/index/DropEdgeAnnIndexProcessor.h"
 #include "meta/processors/index/DropEdgeIndexProcessor.h"
+#include "meta/processors/index/DropTagAnnIndexProcessor.h"
 #include "meta/processors/index/DropTagIndexProcessor.h"
 #include "meta/processors/index/FTIndexProcessor.h"
+#include "meta/processors/index/GetEdgeAnnIndexProcessor.h"
 #include "meta/processors/index/GetEdgeIndexProcessor.h"
+#include "meta/processors/index/GetTagAnnIndexProcessor.h"
 #include "meta/processors/index/GetTagIndexProcessor.h"
 #include "meta/processors/index/ListEdgeAnnIndexesProcessor.h"
 #include "meta/processors/index/ListEdgeIndexesProcessor.h"
@@ -38,7 +43,9 @@
 #include "meta/processors/index/ListTagIndexesProcessor.h"
 #include "meta/processors/job/AdminJobProcessor.h"
 #include "meta/processors/job/GetStatsProcessor.h"
+#include "meta/processors/job/ListEdgeAnnIndexStatusProcessor.h"
 #include "meta/processors/job/ListEdgeIndexStatusProcessor.h"
+#include "meta/processors/job/ListTagAnnIndexStatusProcessor.h"
 #include "meta/processors/job/ListTagIndexStatusProcessor.h"
 #include "meta/processors/job/ReportTaskProcessor.h"
 #include "meta/processors/listener/ListenerProcessor.h"
@@ -295,6 +302,48 @@ folly::Future<cpp2::ListEdgeAnnIndexesResp> MetaServiceHandler::future_listEdgeA
 folly::Future<cpp2::ListIndexStatusResp> MetaServiceHandler::future_listEdgeIndexStatus(
     const cpp2::ListIndexStatusReq& req) {
   auto* processor = ListEdgeIndexStatusProcessor::instance(kvstore_);
+  RETURN_FUTURE(processor);
+}
+
+folly::Future<cpp2::ExecResp> MetaServiceHandler::future_dropTagAnnIndex(
+    const cpp2::DropTagIndexReq& req) {
+  auto* processor = DropTagAnnIndexProcessor::instance(kvstore_);
+  RETURN_FUTURE(processor);
+}
+
+folly::Future<cpp2::GetTagAnnIndexResp> MetaServiceHandler::future_getTagAnnIndex(
+    const cpp2::GetTagIndexReq& req) {
+  auto* processor = GetTagAnnIndexProcessor::instance(kvstore_);
+  RETURN_FUTURE(processor);
+}
+
+folly::Future<cpp2::ListIndexStatusResp> MetaServiceHandler::future_listTagAnnIndexStatus(
+    const cpp2::ListIndexStatusReq& req) {
+  auto* processor = ListTagAnnIndexStatusProcessor::instance(kvstore_);
+  RETURN_FUTURE(processor);
+}
+
+folly::Future<cpp2::ExecResp> MetaServiceHandler::future_createEdgeAnnIndex(
+    const cpp2::CreateEdgeAnnIndexReq& req) {
+  auto* processor = CreateEdgeAnnIndexProcessor::instance(kvstore_);
+  RETURN_FUTURE(processor);
+}
+
+folly::Future<cpp2::ExecResp> MetaServiceHandler::future_dropEdgeAnnIndex(
+    const cpp2::DropEdgeIndexReq& req) {
+  auto* processor = DropEdgeAnnIndexProcessor::instance(kvstore_);
+  RETURN_FUTURE(processor);
+}
+
+folly::Future<cpp2::GetEdgeAnnIndexResp> MetaServiceHandler::future_getEdgeAnnIndex(
+    const cpp2::GetEdgeIndexReq& req) {
+  auto* processor = GetEdgeAnnIndexProcessor::instance(kvstore_);
+  RETURN_FUTURE(processor);
+}
+
+folly::Future<cpp2::ListIndexStatusResp> MetaServiceHandler::future_listEdgeAnnIndexStatus(
+    const cpp2::ListIndexStatusReq& req) {
+  auto* processor = ListEdgeAnnIndexStatusProcessor::instance(kvstore_);
   RETURN_FUTURE(processor);
 }
 

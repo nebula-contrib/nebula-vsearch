@@ -96,6 +96,14 @@ Status StorageServer::setupMemoryMonitorThread() {
   return Status::OK();
 }
 
+void StorageServer::setEnvAnnIndexMgr(VectorIndexManager* annIndexMan) {
+  if (env_ != nullptr) {
+    env_->annIndexMan_ = annIndexMan;
+  }
+  CHECK(env_ != nullptr && env_->annIndexMan_ != nullptr)
+      << "Env and its Ann Index Manager both should be not nullptr";
+}
+
 std::unique_ptr<kvstore::KVStore> StorageServer::getStoreInstance() {
   kvstore::KVOptions options;
   options.dataPaths_ = dataPaths_;
